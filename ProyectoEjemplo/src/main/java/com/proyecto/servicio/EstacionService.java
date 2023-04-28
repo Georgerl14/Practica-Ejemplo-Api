@@ -8,9 +8,11 @@ import com.proyecto.modelo.Estacion;
 public interface EstacionService {
 	public Estacion insertarEstacion(Estacion estacion);
 	
-	public Estacion verEstacion(int id);
+	public Estacion actualizarEstacion(Estacion estacion);
 	
-	public List<Estacion> eliminarEstacion(int id);
+	public Optional<Estacion> verEstacion(int id);
+	
+	public void eliminarEstacion(int id);
 	
 	public List<Estacion> listaEstaciones();
 }

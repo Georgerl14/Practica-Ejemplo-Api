@@ -9,19 +9,26 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "estaciones")
-@Check(constraints = "")
+@Table(name = "estaciones", uniqueConstraints = @UniqueConstraint(columnNames = { "latitud", "longitud" }))
+@Check(constraints = 
+		"((Activa = true AND Estado = 'OPERATIVA') "
+		+ "OR (Activa = false AND Estado IN('EN_MANTENIMIENTO','EN_CALIBRACION'))) "
+		+ "AND (Longitud BETWEEN -180 AND 180)"
+		+ "AND (Latitud BETWEEN -90 AND 90)"
+		+ "AND (TRIM(Nombre) <> ' ')")
+
 public class Estacion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	
-	@NotBlank
+
+	@NotNull
 	@Column(name = "Nombre", length = 30, unique = true, nullable = false)
 	private String nombre;
 
@@ -112,7 +119,10 @@ public class Estacion {
 	}
 
 	public void setActiva(boolean activa) {
-		this.activa = activa;
+		if (estado.equals("OPERATIVA"))
+			this.activa = true;
+		else
+			this.activa = false;
 	}
 
 }
